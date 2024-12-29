@@ -52,6 +52,10 @@ def setup_essentials() -> None:
         # "zoxide",
     )
 
+def setup_apps():
+    setup_starship()
+    pixi_install_packages("gitui")
+
 def setup_starship():
     with tempfile.NamedTemporaryFile("w", suffix=".sh") as file:
         curl("-sS", "https://starship.rs/install.sh")
@@ -97,5 +101,5 @@ def get_shell_name() -> str:
 if __name__ == "__main__":
     setup_pixi()
     setup_essentials()
-    setup_starship()
+    setup_apps()
     update_config_symlinks()
