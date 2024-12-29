@@ -1,10 +1,6 @@
-import argparse
 import functools
-import io
 import os
-import platform
 import shutil
-import stat
 import subprocess
 import tempfile
 import warnings
@@ -16,8 +12,7 @@ REPO_HOME = Path(__file__).parent.resolve()
 REPO_BIN = REPO_HOME / "bin"
 REPO_HOME_CONFIG = REPO_HOME / "config"
 
-# USER_HOME_CONFIG = Path.home() / ".config"
-USER_HOME_CONFIG = Path.home() / "Desktop" / "config"
+USER_HOME_CONFIG = Path.home() / ".config"
 
 PIXI_HOME = Path.home().joinpath(".pixi").resolve()
 PIXI_EXE = PIXI_HOME.joinpath("bin", "pixi")
