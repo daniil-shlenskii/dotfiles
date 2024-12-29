@@ -67,7 +67,7 @@ def update_config_symlinks() -> None:
     for repo_sub_config_path in REPO_HOME_CONFIG.iterdir():
         sub_config_name = str(repo_sub_config_path).rsplit("/", maxsplit=1)[-1]
         user_sub_config_path = USER_HOME_CONFIG / sub_config_name
-        user_sub_config_path.unlink(missing_ok=True)
+        # user_sub_config_path.unlink(missing_ok=True)
         user_sub_config_path.symlink_to(
             repo_sub_config_path,
             target_is_directory=repo_sub_config_path.is_dir(),
