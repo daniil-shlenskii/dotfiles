@@ -6,11 +6,10 @@ import tempfile
 import warnings
 from pathlib import Path
 
-from loguru import logger
-
 REPO_HOME = Path(__file__).parent.resolve()
 REPO_BIN = REPO_HOME / "bin"
 REPO_HOME_CONFIG = REPO_HOME / "config"
+REPO_HOME_TMUX = REPO_HOME / "tmux"
 
 USER_HOME_CONFIG = Path.home() / ".config"
 
@@ -55,6 +54,7 @@ def setup_essentials() -> None:
 def setup_apps():
     setup_starship()
     pixi_install_packages("gitui")
+    setup_tmux()
 
 def setup_starship():
     with tempfile.NamedTemporaryFile("w", suffix=".sh") as file:
@@ -66,16 +66,16 @@ def setup_starship():
 
     sh(f"eval $(starship init {sh_name})", shell=True)
 
+def setup_tmux() -> None:
+    repo_tmux_config_path = REPO_HOME_TMUX / ".tmux.conf"
+    user_tmux_config_path = Path.home() / ".tmux.conf"
+    update_symlink(file_path=repo_tmux_config_path, symlink_path=user_tmux_config_path)
+
 def update_config_symlinks() -> None:
-    logger.info("Update Config Symlinks")
     for repo_sub_config_path in REPO_HOME_CONFIG.iterdir():
         sub_config_name = str(repo_sub_config_path).rsplit("/", maxsplit=1)[-1]
         user_sub_config_path = USER_HOME_CONFIG / sub_config_name
-        user_sub_config_path.unlink(missing_ok=True)
-        user_sub_config_path.symlink_to(
-            repo_sub_config_path,
-            target_is_directory=repo_sub_config_path.is_dir(),
-        )
+        update_symlink(file_path=repo_sub_config_path, symlink_path=user_sub_config_path)
 
 # Utils
 
@@ -95,6 +95,14 @@ def get_shell_name() -> str:
     sh_exe = os.environ['SHELL']
     sh_name = sh_exe.rsplit("/", maxsplit=1)[-1]
     return sh_name
+
+def update_symlink(*, file_path: Path, symlink_path: Path) -> None:
+    symlink_path.unlink(missing_ok=True)
+    symlink_path.symlink_to(
+        file_path,
+        target_is_directory=file_path.is_dir(),
+    )
+    
 
 #
 
