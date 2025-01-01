@@ -46,6 +46,7 @@ def setup_essentials() -> None:
         "starship",
         "gitui",
         "tmux",
+        "xclip",
     )
 
 def setup_starship() -> None:
