@@ -7,17 +7,16 @@ import warnings
 from pathlib import Path
 
 REPO_HOME = Path(__file__).parent.resolve()
-REPO_BIN = REPO_HOME / "bin"
-REPO_HOME_CONFIG = REPO_HOME / "config"
-REPO_HOME_TMUX = REPO_HOME / "tmux"
+REPO_CONFIG_HOME = REPO_HOME / "config"
+REPO_STATIC_RC_ADDON_PATH = REPO_HOME.joinpath("static-rc-addon.sh")
+REPO_GENERATED_RC_ADDON_PATH = REPO_HOME.joinpath("generated-rc-addon.sh")
 
-USER_HOME_CONFIG = Path.home() / ".config"
+XGD_CONFIG_HOME = Path(os.environ.get("XGD_CONFIG_HOME", Path.home() / ".config"))
 
-PIXI_HOME = Path.home().joinpath(".pixi").resolve()
+PIXI_HOME = Path(os.environ.get("PIXI_HOME", Path.home().joinpath(".pixi"))).resolve()
 PIXI_EXE = PIXI_HOME.joinpath("bin", "pixi")
 
-# sh = subprocess.check_call
-sh = functools.partial(subprocess.check_call)
+sh = functools.partial(subprocess.run)
 
 
 # Main handlers
@@ -44,45 +43,30 @@ def setup_essentials() -> None:
         "unzip",
         "starship",
         "gitui",
-        #
-        # "xclip",
-        # "coreutils",
-        # "bat",
-        # "lsdeluxe",
-        # "zoxide",
+        "tmux",
     )
 
-def setup_starship():
+def setup_starship() -> None:
     with tempfile.NamedTemporaryFile("w", suffix=".sh") as file:
         curl("-sS", "https://starship.rs/install.sh")
         sh(["bash", file.name])
 
-    sh_name = get_shell_name()
-    assert sh_name in {"zsh", "bash"}
-
-    shrc_path = Path.home() / f".{sh_name}rc"
-    init_command = (
-        "\n# starship\n" +
-        f'eval "$(starship init {sh_name})"'
-    )
-    add_init_command_into_rc = True
-    with open(shrc_path, "r") as file:
-        if init_command in file.read():
-            add_init_command_into_rc = False
-    if add_init_command_into_rc:
-        with open(shrc_path, "a") as file:
-            file.write(init_command)
-
-def setup_tmux() -> None:
-    repo_tmux_config_path = REPO_HOME_TMUX / ".tmux.conf"
-    user_tmux_config_path = Path.home() / ".tmux.conf"
-    update_symlink(file_path=repo_tmux_config_path, symlink_path=user_tmux_config_path)
-
 def update_config_symlinks() -> None:
-    for repo_sub_config_path in REPO_HOME_CONFIG.iterdir():
+    for repo_sub_config_path in REPO_CONFIG_HOME.iterdir():
         sub_config_name = str(repo_sub_config_path).rsplit("/", maxsplit=1)[-1]
-        user_sub_config_path = USER_HOME_CONFIG / sub_config_name
+        user_sub_config_path = XGD_CONFIG_HOME / sub_config_name
         update_symlink(file_path=repo_sub_config_path, symlink_path=user_sub_config_path)
+
+def generate_rc_addon() -> None:
+    with REPO_GENERATED_RC_ADDON_PATH.open("w") as file:
+        file.write(
+            "\n\n".join(
+                [
+                    f"export PIXI_HOME={PIXI_HOME}",
+                    REPO_STATIC_RC_ADDON_PATH.read_text(),
+                ]
+            )
+        )
 
 # Utils
 
@@ -110,12 +94,11 @@ def update_symlink(*, file_path: Path, symlink_path: Path) -> None:
         target_is_directory=file_path.is_dir(),
     )
 
-
 #
 
 if __name__ == "__main__":
-    # setup_pixi()
-    # setup_essentials()
+    setup_pixi()
+    setup_essentials()
     setup_starship()
-    # setup_tmux()
-    # update_config_symlinks()
+    update_config_symlinks()
+    generate_rc_addon()
