@@ -12,6 +12,8 @@ REPO_STATIC_RC_ADDON_PATH = REPO_HOME.joinpath("static-rc-addon.sh")
 REPO_GENERATED_RC_ADDON_PATH = REPO_HOME.joinpath("generated-rc-addon.sh")
 
 XGD_CONFIG_HOME = Path(os.environ.get("XGD_CONFIG_HOME", Path.home() / ".config"))
+if not XGD_CONFIG_HOME.is_dir():
+    XGD_CONFIG_HOME.mkdir(parents=True)
 
 PIXI_HOME = Path(os.environ.get("PIXI_HOME", Path.home().joinpath(".pixi"))).resolve()
 PIXI_EXE = PIXI_HOME.joinpath("bin", "pixi")
