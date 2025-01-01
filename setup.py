@@ -43,6 +43,7 @@ def setup_essentials() -> None:
         "rsync",
         "unzip",
         "starship",
+        "gitui",
         #
         # "xclip",
         # "coreutils",
@@ -50,11 +51,6 @@ def setup_essentials() -> None:
         # "lsdeluxe",
         # "zoxide",
     )
-
-def setup_apps():
-    setup_starship()
-    pixi_install_packages("gitui")
-    setup_tmux()
 
 def setup_starship():
     with tempfile.NamedTemporaryFile("w", suffix=".sh") as file:
@@ -64,7 +60,18 @@ def setup_starship():
     sh_name = get_shell_name()
     assert sh_name in {"zsh", "bash"}
 
-    sh(f"eval $(starship init {sh_name})", shell=True)
+    shrc_path = Path.home() / f".{sh_name}rc"
+    init_command = (
+        "\n# starship\n" +
+        f'eval "$(starship init {sh_name})"'
+    )
+    add_init_command_into_rc = True
+    with open(shrc_path, "r") as file:
+        if init_command in file.read():
+            add_init_command_into_rc = False
+    if add_init_command_into_rc:
+        with open(shrc_path, "a") as file:
+            file.write(init_command)
 
 def setup_tmux() -> None:
     repo_tmux_config_path = REPO_HOME_TMUX / ".tmux.conf"
@@ -102,12 +109,13 @@ def update_symlink(*, file_path: Path, symlink_path: Path) -> None:
         file_path,
         target_is_directory=file_path.is_dir(),
     )
-    
+
 
 #
 
 if __name__ == "__main__":
-    setup_pixi()
-    setup_essentials()
-    setup_apps()
-    update_config_symlinks()
+    # setup_pixi()
+    # setup_essentials()
+    setup_starship()
+    # setup_tmux()
+    # update_config_symlinks()
