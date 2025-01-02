@@ -47,6 +47,7 @@ def setup_essentials() -> None:
         "gitui",
         "tmux",
         "xclip",
+        "zellij"
     )
 
 def setup_starship() -> None:
@@ -63,9 +64,10 @@ def update_config_symlinks() -> None:
 def generate_rc_addon() -> None:
     with REPO_GENERATED_RC_ADDON_PATH.open("w") as file:
         file.write(
-            "\n\n".join(
+            "\n".join(
                 [
                     f"export PIXI_HOME={PIXI_HOME}",
+                    f"export PATH={PIXI_HOME}/bin:$PATH",
                     REPO_STATIC_RC_ADDON_PATH.read_text(),
                 ]
             )
