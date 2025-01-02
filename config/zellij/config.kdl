@@ -4,6 +4,7 @@ keybinds clear-defaults=true {
     }
     locked {
         bind "q" { Quit; }
+        bind "d" { Detach; }
         // Move
         bind "h" { SwitchToMode "pane"; MoveFocus "left"; SwitchToMode "normal"; }
         bind "j" { SwitchToMode "pane"; MoveFocus "down"; SwitchToMode "normal"; }
@@ -176,9 +177,6 @@ keybinds clear-defaults=true {
     }
     renamepane {
         bind "esc" { UndoRenamePane; SwitchToMode "pane"; }
-    }
-    shared_among "session" "tmux" {
-        bind "d" { Detach; }
     }
     tmux {
         bind "left" { MoveFocus "left"; SwitchToMode "normal"; }

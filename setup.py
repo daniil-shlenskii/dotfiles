@@ -67,6 +67,7 @@ def generate_rc_addon() -> None:
             "\n".join(
                 [
                     f"export PIXI_HOME={PIXI_HOME}",
+                    f"export XGD_CONFIG_HOME={XGD_CONFIG_HOME}",
                     f"export PATH={PIXI_HOME}/bin:$PATH",
                     REPO_STATIC_RC_ADDON_PATH.read_text(),
                 ]
