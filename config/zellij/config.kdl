@@ -28,10 +28,10 @@ keybinds clear-defaults=true {
         bind "l" { NewPane "right"; SwitchToMode "normal"; }
     }
     tab {
-        bind "h" { GoToPreviousTab; }
-        bind "j" { GoToNextTab; }
-        bind "k" { GoToPreviousTab; }
-        bind "l" { GoToNextTab; }
+        bind "h" { GoToPreviousTab; SwitchToMode "normal"; }
+        bind "j" { GoToNextTab; SwitchToMode "normal"; }
+        bind "k" { GoToPreviousTab; SwitchToMode "normal"; }
+        bind "l" { GoToNextTab; SwitchToMode "normal"; }
         //
         bind "1" { GoToTab 1; SwitchToMode "normal"; }
         bind "2" { GoToTab 2; SwitchToMode "normal"; }
