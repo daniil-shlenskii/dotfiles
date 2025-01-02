@@ -1,5 +1,8 @@
 __SHELL_NAME=$(basename $SHELL)
 
+# zellij
+alias zellij="zellij --config ${XGD_CONFIG_HOME}/zellij/config.kdl"
+
 # autocompletion
 case $__SHELL_NAME in
 zsh)
