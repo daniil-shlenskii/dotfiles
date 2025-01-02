@@ -11,7 +11,7 @@ blur = true
 
 [font]
 normal.family = "FiraMono Nerd Font Mono"
-size = 24
+size = 20
 
 [keyboard]
 bindings = [
