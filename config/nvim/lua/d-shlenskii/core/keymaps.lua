@@ -34,6 +34,11 @@ keymap.set("n", "<leader>wh", "<C-w>h", { desc = "Move cursor to the left window
 keymap.set("n", "<leader>wl", "<C-w>l", { desc = "Move cursor to the right window." })
 keymap.set("n", "<leader>wj", "<C-w>j", { desc = "Move cursor to the window below." })
 keymap.set("n", "<leader>wk", "<C-w>k", { desc = "Move cursor to the window above." })
+--
+keymap.set("n", "<D-l>h", "<C-w>h", { desc = "Move cursor to the left window." })
+keymap.set("n", "<D-l>l", "<C-w>l", { desc = "Move cursor to the right window." })
+keymap.set("n", "<D-l>j", "<C-w>j", { desc = "Move cursor to the window below." })
+keymap.set("n", "<D-l>k", "<C-w>k", { desc = "Move cursor to the window above." })
 
 keymap.set("n", "<leader>to", "<cmd>tabnew<CR>", { desc = "Open new tab" })
 keymap.set("n", "<leader>tx", "<cmd>tabclose<CR>", { desc = "Close current tab" })
