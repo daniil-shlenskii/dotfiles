@@ -40,8 +40,8 @@ keymap.set("n", "<D-l>l", "<C-w>l", { desc = "Move cursor to the right window." 
 keymap.set("n", "<D-l>j", "<C-w>j", { desc = "Move cursor to the window below." })
 keymap.set("n", "<D-l>k", "<C-w>k", { desc = "Move cursor to the window above." })
 
-keymap.set("n", "<leader>to", "<cmd>tabnew<CR>", { desc = "Open new tab" })
+keymap.set("n", "<leader>tn", "<cmd>tabnew<CR>", { desc = "Open new tab" })
 keymap.set("n", "<leader>tx", "<cmd>tabclose<CR>", { desc = "Close current tab" })
-keymap.set("n", "<leader>tn", "<cmd>tabn<CR>", { desc = "Go to next tab" })
-keymap.set("n", "<leader>tp", "<cmd>tabp<CR>", { desc = "Go to previous tab" })
+keymap.set("n", "<leader>tl", "<cmd>tabn<CR>", { desc = "Go to next tab" })
+keymap.set("n", "<leader>th", "<cmd>tabp<CR>", { desc = "Go to previous tab" })
 keymap.set("n", "<leader>tf", "<cmd>tabnew %<CR>", { desc = "Open current buffer in new tab" })
