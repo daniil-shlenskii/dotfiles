@@ -3,6 +3,7 @@ vim.g.mapleader = " "
 local keymap = vim.keymap
 
 keymap.set("n", "<leader>nh", ":nohl<CR>", { desc = "Clear search highlights." })
+keymap.set("n", "<leader>nt", ":%s/s+$//e<CR>", { desc = "Clear all training whitespaces." })
 
 -- cursor movement
 keymap.set({ "n", "v", "o" }, "L", "e", { noremap = true, desc = "Move cursor to the end of a next word." })
