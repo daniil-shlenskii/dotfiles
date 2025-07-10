@@ -47,7 +47,8 @@ def setup_essentials() -> None:
         "gitui",
         "tmux",
         "xclip",
-        "zellij"
+        "zellij",
+        "luarocks",
     )
 
 def setup_starship() -> None:
