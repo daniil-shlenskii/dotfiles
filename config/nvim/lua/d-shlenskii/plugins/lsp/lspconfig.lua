@@ -4,16 +4,22 @@ return {
 	dependencies = {
 		"hrsh7th/cmp-nvim-lsp",
 		{ "antosha417/nvim-lsp-file-operations", config = true },
-		{ "folke/neodev.nvim", opts = {} },
+		{
+			"folke/lazydev.nvim",
+			ft = "lua", -- only load on lua files
+			opts = {
+				library = {
+					-- See the configuration section for more details
+					-- Load luvit types when the `vim.uv` word is found
+					{ path = "${3rd}/luv/library", words = { "vim%.uv" } },
+				},
+			},
+		},
 	},
 	opts = {
 		inlay_hints = { enabled = true },
 	},
 	config = function()
-		local lspconfig = require("lspconfig")
-		local mason_lspconfig = require("mason-lspconfig")
-		local cmp_nvim_lsp = require("cmp_nvim_lsp")
-
 		local keymap = vim.keymap
 
 		vim.api.nvim_create_autocmd("LspAttach", {
@@ -41,121 +47,150 @@ return {
 				opts.desc = "Show Available Actions"
 				keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, opts)
 
-				opts.desc = "Rename with LSP"
+				opts.desc = "Rename With LSP"
 				keymap.set("n", "<leader>cr", vim.lsp.buf.rename, opts)
 
+				opts.desc = "Show Documentation Under Cursor"
+				keymap.set("n", "<leader>ch", vim.lsp.buf.hover, opts)
+
 				opts.desc = "Show Buffer Diagnostics"
-				keymap.set("n", "<leader>D", "<cmd>Telescope diagnostics bufnr=0<CR>", opts)
+				keymap.set("n", "<leader>dd", "<cmd>Telescope diagnostics bufnr=0<CR>", opts)
 
 				opts.desc = "Show Line Diagnostics"
-				keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts)
+				keymap.set("n", "<leader>dl", vim.diagnostic.open_float, opts)
 
-				opts.desc = "Go to Previous Diagnostic"
-				keymap.set("n", "<leader>xn", vim.diagnostic.goto_prev, opts)
-				keymap.set("n", "<leader>x]", vim.diagnostic.goto_prev, opts)
+				opts.desc = "Go to Prev Diagnostic"
+				keymap.set("n", "<leader>dk", function()
+					vim.diagnostic.jump({ count = -1, float = true })
+				end, opts)
 
 				opts.desc = "Go to Next Diagnostic"
-				keymap.set("n", "<leader>xp", vim.diagnostic.goto_next, opts)
-				keymap.set("n", "<leader>x[", vim.diagnostic.goto_next, opts)
-
-				opts.desc = "Show Documentation under Cursor"
-				keymap.set("n", "K", vim.lsp.buf.hover, opts)
+				keymap.set("n", "<leader>dj", function()
+					vim.diagnostic.jump({ count = 1, float = true })
+				end, opts)
 
 				opts.desc = "Restart LSP"
 				keymap.set("n", "<leader>R", ":LspRestart<CR>", opts)
 			end,
 		})
 
-		-- used to enable autocompletion (assign to every lsp server config)
-		local capabilities = cmp_nvim_lsp.default_capabilities()
+		local capabilities = require("cmp_nvim_lsp").default_capabilities()
+		vim.lsp.config("*", { capabilities = capabilities })
 
-		-- Change the Diagnostic symbols in the sign column (gutter)
-		-- (not in youtube nvim video)
-		local signs = { Error = " ", Warn = " ", Hint = "󰠠 ", Info = " " }
-		for type, icon in pairs(signs) do
-			local hl = "DiagnosticSign" .. type
-			vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
-		end
+		vim.lsp.enable("buf_ls")
+		vim.lsp.enable("yamlls")
+		vim.lsp.enable("ruff")
 
-		require("mason-lspconfig").setup_handlers({
-			-- default handler for installed servers
-			function(server_name)
-				lspconfig[server_name].setup({
-					capabilities = capabilities,
-				})
-			end,
-			["basedpyright"] = function()
-				lspconfig["basedpyright"].setup({
-					capabilities = capabilities,
-					settings = {
-						basedpyright = {
-							analysis = {
-								typeCheckingMode = "off",
-								reportUnknownVariableType = false,
-								reportMissingTypeArgument = false,
-								strictParameterNoneValue = false,
-								reportAssignmentType = false,
-								inlayHints = {
-									-- Common Pyright options
-									variableTypes = true,
-									pytestParameters = true,
-									functionReturnTypes = true,
-									typeCheckingMode = "basic",
-									-- Exclusive Basedpyright options
-									reportAny = false,
-									--
-								},
-							},
+		vim.lsp.enable("lua_ls")
+		vim.lsp.config("lua_ls", {
+			settings = {
+				Lua = {
+					diagnostics = {
+						globals = { "vim" },
+					},
+					completion = {
+						callSnippet = "Replace",
+					},
+					hint = {
+						enable = true,
+						setType = true,
+						paramType = true,
+					},
+				},
+			},
+		})
+
+		vim.lsp.enable("sourcekit")
+
+		vim.lsp.enable("gopls")
+		vim.lsp.config("gopls", {
+			settings = {
+				gopls = {
+					hints = {
+						assignVariableTypes = true,
+						compositeLiteralFields = true,
+						compositeLiteralTypes = true,
+						constantValues = true,
+						functionTypeParameters = true,
+						parameterNames = true,
+						rangeVariableTypes = true,
+					},
+					analyses = {
+						unreachable = true,
+						unusedvariable = true,
+						unusedparams = true,
+						nilness = true,
+					},
+					staticcheck = true,
+					gofumpt = true,
+				},
+			},
+		})
+
+		vim.lsp.enable("basedpyright")
+		vim.lsp.config("basedpyright", {
+			settings = {
+				basedpyright = {
+					analysis = {
+						typeCheckingMode = "basic",
+						-- Exclusive Basedpyright options
+						reportAny = false,
+						inlayHints = {
+							-- Common Pyright options
+							variableTypes = true,
+							pytestParameters = true,
+							functionReturnTypes = true,
 						},
 					},
-				})
+				},
+			},
+		})
+
+		vim.lsp.enable("clangd")
+		vim.lsp.config("clangd", {
+			filetypes = { "c", "cpp", "cuda" },
+			root_dir = function(fname)
+				return require("lspconfig.util").root_pattern(
+					"Makefile",
+					"configure.ac",
+					"configure.in",
+					"config.h.in",
+					"meson.build",
+					"meson_options.txt",
+					"build.ninja"
+				)(fname) or require("lspconfig.util").root_pattern(
+					"CMakeLists.txt",
+					"compile_commands.json",
+					"compile_flags.txt",
+					".clangd"
+				)(fname) or vim.fs.dirname(vim.fs.find(".git", { path = fname, upward = true })[1])
 			end,
-			["gopls"] = function()
-				lspconfig["gopls"].setup({
-					capabilities = capabilities,
-					settings = {
-						gopls = {
-							hints = {
-								assignVariableTypes = true,
-								compositeLiteralFields = true,
-								compositeLiteralTypes = true,
-								constantValues = true,
-								functionTypeParameters = true,
-								parameterNames = true,
-								rangeVariableTypes = true,
-							},
-							analyses = {
-								unreachable = true,
-								unusedvariable = true,
-								unusedparams = true,
-								nilness = true,
-							},
-							staticcheck = true,
-							gofumpt = true,
-						},
-					},
-				})
-			end,
-			["lua_ls"] = function()
-				lspconfig["lua_ls"].setup({
-					capabilities = capabilities,
-					settings = {
-						Lua = {
-							diagnostics = {
-								globals = { "vim" },
-							},
-							completion = {
-								callSnippet = "Replace",
-							},
-							hint = {
-								enable = true,
-								setType = true,
-								paramType = true,
-							},
-						},
-					},
-				})
-			end,
+		})
+
+		vim.lsp.enable("rust_analyzer")
+		vim.lsp.config("rust_analyzer", {
+			settings = {
+				["rust-analyzer"] = {
+					cargo = { allFeatures = true },
+				},
+			},
+		})
+
+		vim.diagnostic.config({
+			signs = {
+				text = {
+					[vim.diagnostic.severity.ERROR] = "",
+					[vim.diagnostic.severity.WARN] = "",
+					[vim.diagnostic.severity.INFO] = "",
+					[vim.diagnostic.severity.HINT] = "󰠠",
+				},
+				numhl = {
+					[vim.diagnostic.severity.ERROR] = "",
+					[vim.diagnostic.severity.WARN] = "",
+					[vim.diagnostic.severity.INFO] = "",
+					[vim.diagnostic.severity.HINT] = "",
+				},
+			},
 		})
 	end,
 }
