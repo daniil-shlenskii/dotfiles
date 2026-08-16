@@ -49,7 +49,8 @@ def setup_essentials() -> None:
         "xclip",
         "zellij",
         "luarocks",
-        "chafa"
+        "chafa",
+        "imagemagick",
     )
 
 def setup_starship() -> None:
