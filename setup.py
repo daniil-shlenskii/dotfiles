@@ -92,7 +92,16 @@ def get_shell_name() -> str:
     return sh_name
 
 def update_symlink(*, file_path: Path, symlink_path: Path) -> None:
-    symlink_path.unlink(missing_ok=True)
+    if symlink_path.is_symlink():
+        symlink_path.unlink()
+    elif symlink_path.exists():
+        backup_path = symlink_path.with_name(f"{symlink_path.name}.backup")
+        if backup_path.exists():
+            raise RuntimeError(
+                f"Cannot back up {symlink_path}: {backup_path} already exists"
+            )
+        symlink_path.rename(backup_path)
+        warnings.warn(f"Moved existing {symlink_path} to {backup_path}")
     symlink_path.symlink_to(
         file_path,
         target_is_directory=file_path.is_dir(),
