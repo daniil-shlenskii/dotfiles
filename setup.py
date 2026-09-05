@@ -10,6 +10,7 @@ REPO_HOME = Path(__file__).parent.resolve()
 REPO_CONFIG_HOME = REPO_HOME / "config"
 REPO_STATIC_RC_ADDON_PATH = REPO_HOME.joinpath("static-rc-addon.sh")
 REPO_GENERATED_RC_ADDON_PATH = REPO_HOME.joinpath("generated-rc-addon.sh")
+IGNORED_CONFIG_NAMES = frozenset({".DS_Store"})
 
 XDG_CONFIG_HOME = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config"))
 if not XDG_CONFIG_HOME.is_dir():
@@ -55,8 +56,9 @@ def setup_essentials() -> None:
 
 def update_config_symlinks() -> None:
     for repo_sub_config_path in REPO_CONFIG_HOME.iterdir():
-        sub_config_name = str(repo_sub_config_path).rsplit("/", maxsplit=1)[-1]
-        user_sub_config_path = XDG_CONFIG_HOME / sub_config_name
+        if repo_sub_config_path.name in IGNORED_CONFIG_NAMES:
+            continue
+        user_sub_config_path = XDG_CONFIG_HOME / repo_sub_config_path.name
         update_symlink(file_path=repo_sub_config_path, symlink_path=user_sub_config_path)
 
 def generate_rc_addon() -> None:
