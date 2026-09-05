@@ -18,7 +18,7 @@ if not XGD_CONFIG_HOME.is_dir():
 PIXI_HOME = Path(os.environ.get("PIXI_HOME", Path.home().joinpath(".pixi"))).resolve()
 PIXI_EXE = PIXI_HOME.joinpath("bin", "pixi")
 
-sh = functools.partial(subprocess.run)
+sh = functools.partial(subprocess.run, check=True)
 
 
 # Main handlers
