@@ -2,7 +2,6 @@ return {
 	"williamboman/mason-lspconfig.nvim",
 	dependencies = {
 		"williamboman/mason.nvim",
-		"WhoIsSethDaniel/mason-tool-installer.nvim",
 	},
 	event = { "BufReadPre", "BufNewFile" },
 	config = function()
@@ -14,15 +13,6 @@ return {
 				"basedpyright",
 			},
 			automatic_installation = true,
-		})
-
-		local mason_tool_installer = require("mason-tool-installer")
-
-		mason_tool_installer.setup({
-			ensure_installed = {
-				"stylua",
-				"shfmt",
-			},
 		})
 	end,
 }

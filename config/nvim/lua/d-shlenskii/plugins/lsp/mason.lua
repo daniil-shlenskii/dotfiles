@@ -22,6 +22,7 @@ return {
 			ensure_installed = {
 				"stylua", -- lua formatter
 				"isort", -- python formatter
+				"shfmt", -- shell formatter
 			},
 		})
 	end,
