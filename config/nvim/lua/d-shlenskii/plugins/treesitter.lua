@@ -8,7 +8,8 @@ return {
 	opts = {
 		modules = {},
 		auto_install = true,
-		ignore_install = {},
+		-- needs the tree-sitter CLI and node to be generated from grammar
+		ignore_install = { "latex" },
 		sync_install = false,
 		highlight = {
 			enable = true,
@@ -37,7 +38,6 @@ return {
 			"make",
 			"cmake",
 			"python",
-			"latex",
 			"proto",
 		},
 	},
