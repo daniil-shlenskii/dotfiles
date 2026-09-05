@@ -50,6 +50,7 @@ def setup_essentials() -> None:
         "xclip",
         "zellij",
         "luarocks",
+        "uv",
         "chafa",
         "imagemagick",
     )
