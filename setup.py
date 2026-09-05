@@ -11,9 +11,9 @@ REPO_CONFIG_HOME = REPO_HOME / "config"
 REPO_STATIC_RC_ADDON_PATH = REPO_HOME.joinpath("static-rc-addon.sh")
 REPO_GENERATED_RC_ADDON_PATH = REPO_HOME.joinpath("generated-rc-addon.sh")
 
-XGD_CONFIG_HOME = Path(os.environ.get("XGD_CONFIG_HOME", Path.home() / ".config"))
-if not XGD_CONFIG_HOME.is_dir():
-    XGD_CONFIG_HOME.mkdir(parents=True)
+XDG_CONFIG_HOME = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config"))
+if not XDG_CONFIG_HOME.is_dir():
+    XDG_CONFIG_HOME.mkdir(parents=True)
 
 PIXI_HOME = Path(os.environ.get("PIXI_HOME", Path.home().joinpath(".pixi"))).resolve()
 PIXI_EXE = PIXI_HOME.joinpath("bin", "pixi")
@@ -56,7 +56,7 @@ def setup_essentials() -> None:
 def update_config_symlinks() -> None:
     for repo_sub_config_path in REPO_CONFIG_HOME.iterdir():
         sub_config_name = str(repo_sub_config_path).rsplit("/", maxsplit=1)[-1]
-        user_sub_config_path = XGD_CONFIG_HOME / sub_config_name
+        user_sub_config_path = XDG_CONFIG_HOME / sub_config_name
         update_symlink(file_path=repo_sub_config_path, symlink_path=user_sub_config_path)
 
 def generate_rc_addon() -> None:
@@ -65,7 +65,7 @@ def generate_rc_addon() -> None:
             "\n".join(
                 [
                     f"export PIXI_HOME={PIXI_HOME}",
-                    f"export XGD_CONFIG_HOME={XGD_CONFIG_HOME}",
+                    f"export XDG_CONFIG_HOME={XDG_CONFIG_HOME}",
                     f"export PATH={PIXI_HOME}/bin:$PATH",
                     REPO_STATIC_RC_ADDON_PATH.read_text(),
                 ]
