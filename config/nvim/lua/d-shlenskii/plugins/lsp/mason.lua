@@ -23,6 +23,7 @@ return {
 				"stylua", -- lua formatter
 				"isort", -- python formatter
 				"shfmt", -- shell formatter
+				"pylint", -- python linter, used by nvim-lint
 			},
 		})
 	end,
