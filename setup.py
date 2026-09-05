@@ -53,11 +53,6 @@ def setup_essentials() -> None:
         "imagemagick",
     )
 
-def setup_starship() -> None:
-    with tempfile.NamedTemporaryFile("w", suffix=".sh") as file:
-        curl("-sS", "https://starship.rs/install.sh")
-        sh(["bash", file.name])
-
 def update_config_symlinks() -> None:
     for repo_sub_config_path in REPO_CONFIG_HOME.iterdir():
         sub_config_name = str(repo_sub_config_path).rsplit("/", maxsplit=1)[-1]
@@ -108,6 +103,5 @@ def update_symlink(*, file_path: Path, symlink_path: Path) -> None:
 if __name__ == "__main__":
     setup_pixi()
     setup_essentials()
-    setup_starship()
     update_config_symlinks()
     generate_rc_addon()
